@@ -106,7 +106,7 @@
 	<script type="text/javascript" src="js/tbdValidate.js"></script>
 	<script type="text/javascript">
 		var regconfig = [
-			{ eleinput: "login_phone", eletext: "login_phone_text", rule: [{ reg: /^.+$/, text: "Phone number cannot be empty" }, { reg: /^1[34578]\d{9}$/, text: "Malformed phone number" }] },
+			{ eleinput: "login_phone", eletext: "login_phone_text", rule: [{ reg: /^.+$/, text: "Phone number cannot be empty" }, { reg: /\+?\d+/, text: "Malformed phone number" }] },
 			{ eleinput: "reg_info_company", eletext: "reg_info_company_text", rule: [{ reg: /^.+$/, text: "Business name cannot be empty" }, { reg: /^.{1,20}$/, text: "The company name does not exceed 20 words" }] },
 			{ eleinput: "reg_info_name", eletext: "reg_info_name_text", rule: [{ reg: /^.+$/, text: "Name cannot be empty" }, { reg: /^.{1,20}$/, text: "Name no more than 20 words" }] },
 			{ eleinput: "reg_info_email", eletext: "reg_info_email_text", rule: [{ reg: /^.+$/, text: "Email cannot be empty" }, { reg: /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/, text: "Email address format error" }] }
