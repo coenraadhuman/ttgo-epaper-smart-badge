@@ -32,7 +32,6 @@ TTGO Badge & TTGO EPaper Series
 | SPRAM               | N/A            | N/A       | N/A       | supported | N/A       | N/A       | supported |
 | Support EPaper Size | Full Size      | Full Size | Full Size | Full Size | Full Size | Full Size | Full Size |
 
-
 ## Note1: 
 
 **Max98357**
@@ -86,8 +85,8 @@ TTGO Badge & TTGO EPaper Series
 - [Adafruit-GFX-Library](https://github.com/adafruit/Adafruit-GFX-Library)
 - [AsyncTCP](https://github.com/me-no-dev/AsyncTCP)
 - [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer)
-- [ArduinoJson](https://github.com/bblanchon/ArduinoJson/releases)
-- [ESP8266Audio](https://github.com/earlephilhower/ESP8266Audio), use version 5.13.2
+- [ArduinoJson](https://github.com/bblanchon/ArduinoJson/releases), use version 5.13.2
+- [ESP8266Audio](https://github.com/earlephilhower/ESP8266Audio)
 
 **CAUTION!**: The Arduino Library Manager installs the ArduinoJson version 6 by default. In here using version 5 is recommended because version 6 is still in beta stage. Please select 5.13.2 version to install on the releas page.
 
@@ -105,8 +104,5 @@ TTGO Badge & TTGO EPaper Series
 - **Page2**
 ![](images/2.png)
 
-
 ## CAUTION:
 - Currently only supports 100*100 size BMP format as image file for uploading
-
-
