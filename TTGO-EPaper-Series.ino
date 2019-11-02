@@ -83,8 +83,8 @@ const GFXfont *fonts[] = {
 #define BADGE_CONFIG_FILE_NAME "/badge.data"
 #define DEFALUT_AVATAR_BMP "/avatar.bmp"
 #define DEFALUT_QR_CODE_BMP "/qr.bmp"
-#define WIFI_SSID "Put your wifi ssid"
-#define WIFI_PASSWORD "Put your wifi password"
+//#define WIFI_SSID "Put your wifi ssid"
+#define WIFI_PASSWORD "48714650"
 #define CHANNEL_0 0
 #define IP5306_ADDR 0X75
 #define IP5306_REG_SYS_CTL0 0x00
@@ -165,6 +165,13 @@ void button_handle(uint8_t gpio)
             index = false;
         }
     }
+    Serial.println("BUTTON_3");
+
+    //here
+    Serial.println("Going to sleep now");
+    delay(2000);
+    esp_deep_sleep_start();
+     
     break;
 #endif
     default:
@@ -337,8 +344,12 @@ void WebServerStart(void)
     esp_wifi_get_mac(WIFI_IF_STA, mac);
 
     sprintf(apName, "TTGO-Badge-%02X:%02X", mac[4], mac[5]);
-
-    if (!WiFi.softAP(apName, NULL, 1, 0, 1))
+    
+    // set AP Password
+    WiFi.softAP(apName, WIFI_PASSWORD);
+    
+    //if (!WiFi.softAP(apName, NULL, 1, 0, 1))
+    if (!WiFi.softAP(apName, WIFI_PASSWORD, 1, 0, 1)
     {
         Serial.println("AP Config failed.");
         return;
