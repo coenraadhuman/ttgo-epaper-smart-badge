@@ -10,15 +10,15 @@
 // #include <GxGDE0213B1/GxGDE0213B1.h>      // 2.13" b/w
 #include <GxGDE0213B72B/GxGDE0213B72B.h>     // 2.13" b/w           - Board 20190107 T5_V2.3_2.13
 // #include <GxGDEW0213Z16/GxGDEW0213Z16.h>  // 2.13" b/w/r
-// #include <GxGDEH029A1/GxGDEH029A1.h>      // 2.9" b/w
-// #include <GxGDEW029Z10/GxGDEW029Z10.h>    // 2.9" b/w/r
-// #include <GxGDEW027C44/GxGDEW027C44.h>    // 2.7" b/w/r
-// #include <GxGDEW027W3/GxGDEW027W3.h>      // 2.7" b/w
-// #include <GxGDEW042T2/GxGDEW042T2.h>      // 4.2" b/w
-// #include <GxGDEW042Z15/GxGDEW042Z15.h>    // 4.2" b/w/r
+// #include <GxGDEH029A1/GxGDEH029A1.h>      // 2.9"  b/w
+// #include <GxGDEW029Z10/GxGDEW029Z10.h>    // 2.9"  b/w/r
+// #include <GxGDEW027C44/GxGDEW027C44.h>    // 2.7"  b/w/r
+// #include <GxGDEW027W3/GxGDEW027W3.h>      // 2.7"  b/w
+// #include <GxGDEW042T2/GxGDEW042T2.h>      // 4.2"  b/w
+// #include <GxGDEW042Z15/GxGDEW042Z15.h>    // 4.2"  b/w/r
 // #include <GxGDEW0583T7/GxGDEW0583T7.h>    // 5.83" b/w
-// #include <GxGDEW075T8/GxGDEW075T8.h>      // 7.5" b/w
-// #include <GxGDEW075Z09/GxGDEW075Z09.h>    // 7.5" b/w/r
+// #include <GxGDEW075T8/GxGDEW075T8.h>      // 7.5"  b/w
+// #include <GxGDEW075Z09/GxGDEW075Z09.h>    // 7.5"  b/w/r
 
 #include <Fonts/FreeMono9pt7b.h>
 #include <Fonts/FreeMonoBoldOblique9pt7b.h>
@@ -82,7 +82,7 @@ const GFXfont *fonts[] = {
 #define USE_AP_MODE
 
 /*100 * 100 bmp fromat*/
-// https://www.onlineconverter.com/jpg-to-bmp
+// https://www.onlineconverter.com/jpg-t48714650o-bmp
 #define BADGE_CONFIG_FILE_NAME "/badge.data"
 #define DEFALUT_AVATAR_BMP "/avatar.bmp"
 #define DEFALUT_QR_CODE_BMP "/qr.bmp"
@@ -125,71 +125,167 @@ const char *path[2] = {DEFALUT_AVATAR_BMP, DEFALUT_QR_CODE_BMP};
 Button2 *pBtns = nullptr;
 uint8_t g_btns[] = BUTTONS_MAP;
 
-void button_handle(uint8_t gpio)
+void button_handle_single(uint8_t gpio)
 {
-  switch (gpio)
-  {
+    switch (gpio)
+    {
 #if BUTTON_1
     case BUTTON_1:
-      {
+    {
         // esp_sleep_enable_ext0_wakeup((gpio_num_t)BUTTON_1, LOW);
         esp_sleep_enable_ext1_wakeup(((uint64_t)(((uint64_t)1) << BUTTON_1)), ESP_EXT1_WAKEUP_ALL_LOW);
         Serial.println("Going to sleep now");
         delay(2000);
         esp_deep_sleep_start();
-      }
-      break;
+    }
+    break;
 #endif
 
 #if BUTTON_2
     case BUTTON_2:
-      {
+    {
         static int i = 0;
         Serial.printf("Show Num: %d font\n", i);
         i = ((i + 1) >= sizeof(fonts) / sizeof(fonts[0])) ? 0 : i + 1;
         display.setFont(fonts[i]);
-        showMianPage();
-      }
-      break;
+        showMainPage();
+    }
+    break;
 #endif
 
 #if BUTTON_3
     case BUTTON_3:
-      {
+    {
         static bool index = 1;
         if (!index)
         {
-          showMianPage();
-          index = true;
+            showMainPage();
+            index = true;
         }
         else
         {
-          showQrPage();
-          index = false;
+            showQrPage();
+            index = false;
         }
-      }
-      Serial.println("BUTTON_3");
-
-      //here
-      Serial.println("Going to sleep now");
-      delay(2000);
-      esp_deep_sleep_start();
-
-      break;
+    }
+    break;
 #endif
     default:
-      break;
-  }
+        break;
+    }
 }
 
-void button_callback(Button2 &b)
+void button_handle_double(uint8_t gpio)
+{
+    switch (gpio)
+    {
+#if BUTTON_1
+    case BUTTON_1:
+    {
+        // esp_sleep_enable_ext0_wakeup((gpio_num_t)BUTTON_1, LOW);
+        esp_sleep_enable_ext1_wakeup(((uint64_t)(((uint64_t)1) << BUTTON_1)), ESP_EXT1_WAKEUP_ALL_LOW);
+        Serial.println("Going to sleep now");
+        delay(2000);
+        esp_deep_sleep_start();
+    }
+    break;
+#endif
+
+#if BUTTON_2
+    case BUTTON_2:
+    {
+        static int i = 0;
+        Serial.printf("Show Num: %d font\n", i);
+        i = ((i + 1) >= sizeof(fonts) / sizeof(fonts[0])) ? 0 : i + 1;
+        display.setFont(fonts[i]);
+        showMainPage();
+    }
+    break;
+#endif
+
+#if BUTTON_3
+    case BUTTON_3:
+    {
+        static int i = 0;
+        Serial.printf("Show Num: %d font\n", i);
+        i = ((i + 1) >= sizeof(fonts) / sizeof(fonts[0])) ? 0 : i + 1;
+        display.setFont(fonts[i]);
+        showMainPage();
+    }
+    break;
+#endif
+    default:
+        break;
+    }
+}
+
+void button_handle_triple(uint8_t gpio)
+{
+    switch (gpio)
+    {
+#if BUTTON_1
+    case BUTTON_1:
+    {
+        // esp_sleep_enable_ext0_wakeup((gpio_num_t)BUTTON_1, LOW);
+        esp_sleep_enable_ext1_wakeup(((uint64_t)(((uint64_t)1) << BUTTON_1)), ESP_EXT1_WAKEUP_ALL_LOW);
+        Serial.println("Going to sleep now");
+        delay(2000);
+        esp_deep_sleep_start();
+    }
+    break;
+#endif
+
+#if BUTTON_2
+    case BUTTON_2:
+    {
+        static int i = 0;
+        Serial.printf("Show Num: %d font\n", i);
+        i = ((i + 1) >= sizeof(fonts) / sizeof(fonts[0])) ? 0 : i + 1;
+        display.setFont(fonts[i]);
+        showMainPage();
+    }
+    break;
+#endif
+
+#if BUTTON_3
+    case BUTTON_3:
+    {
+        // esp_sleep_enable_ext0_wakeup((gpio_num_t)BUTTON_1, LOW);
+        esp_sleep_enable_ext1_wakeup(((uint64_t)(((uint64_t)1) << BUTTON_3)), ESP_EXT1_WAKEUP_ALL_LOW);
+        Serial.println("Going to sleep now");
+        delay(2000);
+        esp_deep_sleep_start();
+    }
+    break;
+#endif
+    default:
+        break;
+    }
+}
+
+void button_callback(Button2& b)
 {
   for (int i = 0; i < sizeof(g_btns) / sizeof(g_btns[0]); ++i)
   {
     if (pBtns[i] == b)
     {
-      Serial.printf("btn: %u press\n", pBtns[i].getAttachPin());
-      button_handle(pBtns[i].getAttachPin());
+      switch (b.getClickType()) {
+        case SINGLE_CLICK:
+            Serial.println("Button single click.");
+            Serial.printf("btn: %u press\n", pBtns[i].getAttachPin());
+            button_handle_single(pBtns[i].getAttachPin());
+            break;
+        case DOUBLE_CLICK:
+            Serial.println("Button double click.");
+            Serial.printf("btn: %u press\n", pBtns[i].getAttachPin());
+            button_handle_double(pBtns[i].getAttachPin());
+            break;
+        case TRIPLE_CLICK:
+            Serial.println("Button triple click.");
+            Serial.printf("btn: %u press\n", pBtns[i].getAttachPin());
+            button_handle_triple(pBtns[i].getAttachPin());
+            break;
+      }
     }
   }
 }
@@ -201,7 +297,9 @@ void button_init()
   for (int i = 0; i < args; ++i)
   {
     pBtns[i] = Button2(g_btns[i]);
-    pBtns[i].setPressedHandler(button_callback);
+    pBtns[i].setClickHandler(button_callback);
+    pBtns[i].setDoubleClickHandler(button_callback);
+    pBtns[i].setTripleClickHandler(button_callback);
   }
 }
 
@@ -459,7 +557,7 @@ void WebServerStart(void)
       if (++pathIndex >= 2)
       {
         pathIndex = 0;
-        showMianPage();
+        showMainPage();
       }
     }
   });
@@ -473,7 +571,7 @@ void WebServerStart(void)
   server.begin();
 }
 
-void showMianPage(void)
+void showMainPage(void)
 {
   displayInit();
   display.fillScreen(GxEPD_WHITE);
@@ -822,7 +920,7 @@ void setup()
 
   if (esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_UNDEFINED)
   {
-    showMianPage();
+    showMainPage();
   }
 
   WebServerStart();
