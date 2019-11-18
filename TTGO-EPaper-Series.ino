@@ -7,7 +7,8 @@
 // #include <GxGDEP015OC1/GxGDEP015OC1.h>    // 1.54" b/w
 // #include <GxGDEW0154Z04/GxGDEW0154Z04.h>  // 1.54" b/w/r 200x200
 // #include <GxGDEW0154Z17/GxGDEW0154Z17.h>  // 1.54" b/w/r 152x152
-#include <GxGDE0213B1/GxGDE0213B1.h>      // 2.13" b/w
+// #include <GxGDE0213B1/GxGDE0213B1.h>      // 2.13" b/w
+#include <GxGDE0213B72B/GxGDE0213B72B.h>     // 2.13" b/w           - Board 20190107 T5_V2.3_2.13
 // #include <GxGDEW0213Z16/GxGDEW0213Z16.h>  // 2.13" b/w/r
 // #include <GxGDEH029A1/GxGDEH029A1.h>      // 2.9" b/w
 // #include <GxGDEW029Z10/GxGDEW029Z10.h>    // 2.9" b/w/r
@@ -351,7 +352,7 @@ void WebServerStart(void)
   WiFi.softAP(apName, WIFI_PASSWORD);
 
   //if (!WiFi.softAP(apName, NULL, 1, 0, 1))
-  if (!WiFi.softAP(apName, WIFI_PASSWORD, 1, 0, 1)
+  if (!WiFi.softAP(apName, WIFI_PASSWORD, 1, 0, 1))
 {
   Serial.println("AP Config failed.");
     return;

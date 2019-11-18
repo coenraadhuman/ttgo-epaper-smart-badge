@@ -2,7 +2,7 @@
 #define TTGO_T5_2_0 0
 #define TTGO_T5_2_1 0
 #define TTGO_T5_2_2 0
-#define TTGO_T5_2_3 0
+#define TTGO_T5_2_3 1
 #define TTGO_T5_2_4 0
 #define TTGO_T5_2_8 0   //! Silk screen marking T5_V28_27
 
