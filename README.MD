@@ -1,5 +1,15 @@
-TTGO Badge & TTGO EPaper Series
-========================
+TTGO Smart Badge
+================
+
+## *Differences* From Main Repository
+- This project is aimed at the creation of a smart badge.
+- Includes header for board "20190107 T5_V2.3_2.13".
+- Adds single, double and tripple click so that button 3 on above mention board can handle all original functionality.
+- Default settings is AP mode (password: "48714650") and set for board "20190107 T5_V2.3_2.13".
+- Some grammer fixes in the code and some clean ups.
+- Improved website for interaction with smart badge.
+- Includes libraries to get you started, see "guide" directory.
+- Includes our notes and other guides in "guide" directory.
 
 ![](images/4.png)
 
