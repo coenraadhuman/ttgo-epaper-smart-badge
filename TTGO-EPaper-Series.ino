@@ -122,9 +122,18 @@ uint8_t color_palette_buffer[max_palette_pixels / 8]; // palette buffer for dept
 uint8_t input_buffer[3 * input_buffer_pixels];        // up to depth 24
 const char *path[2] = {DEFALUT_AVATAR_BMP, DEFALUT_QR_CODE_BMP};
 bool selectedScreen = true; // true = main, false = qr.
+bool card = false; // true if available
 
 Button2 *pBtns = nullptr;
 uint8_t g_btns[] = BUTTONS_MAP;
+
+void showScreenSleep() {
+  if (selectedScreen) {
+    showMainPage(true);
+  } else {
+    showQrPage(true);
+  }
+}
 
 void button2() {
    static int i = 0;
@@ -132,10 +141,10 @@ void button2() {
    i = ((i + 1) >= sizeof(fonts) / sizeof(fonts[0])) ? 0 : i + 1;
    display.setFont(fonts[i]);
    if (selectedScreen) {
-    showMainPage();
+    showMainPage(false);
    }
    else {
-    showQrPage();
+    showQrPage(false);
    }
 }
 
@@ -143,12 +152,12 @@ void button3() {
    static bool index = 1;
    if (!index)
    {
-      showMainPage();
+      showMainPage(false);
       index = true;
    }
    else
    {
-      showQrPage();
+      showQrPage(false);
       index = false;
    }
 }
@@ -162,6 +171,7 @@ void button_handle_single(uint8_t gpio)
     {
         // esp_sleep_enable_ext0_wakeup((gpio_num_t)BUTTON_1, LOW);
         esp_sleep_enable_ext1_wakeup(((uint64_t)(((uint64_t)1) << BUTTON_1)), ESP_EXT1_WAKEUP_ALL_LOW);
+        showScreenSleep();
         Serial.println("Going to sleep now");
         delay(2000);
         esp_deep_sleep_start();
@@ -198,6 +208,7 @@ void button_handle_double(uint8_t gpio)
     {
         // esp_sleep_enable_ext0_wakeup((gpio_num_t)BUTTON_1, LOW);
         esp_sleep_enable_ext1_wakeup(((uint64_t)(((uint64_t)1) << BUTTON_1)), ESP_EXT1_WAKEUP_ALL_LOW);
+        showScreenSleep();
         Serial.println("Going to sleep now");
         delay(2000);
         esp_deep_sleep_start();
@@ -234,6 +245,7 @@ void button_handle_triple(uint8_t gpio)
     {
         // esp_sleep_enable_ext0_wakeup((gpio_num_t)BUTTON_1, LOW);
         esp_sleep_enable_ext1_wakeup(((uint64_t)(((uint64_t)1) << BUTTON_1)), ESP_EXT1_WAKEUP_ALL_LOW);
+        showScreenSleep();
         Serial.println("Going to sleep now");
         delay(2000);
         esp_deep_sleep_start();
@@ -254,6 +266,7 @@ void button_handle_triple(uint8_t gpio)
     {
         // esp_sleep_enable_ext0_wakeup((gpio_num_t)BUTTON_1, LOW);
         esp_sleep_enable_ext1_wakeup(((uint64_t)(((uint64_t)1) << BUTTON_3)), ESP_EXT1_WAKEUP_ALL_LOW);
+        showScreenSleep();
         Serial.println("Going to sleep now");
         delay(2000);
         esp_deep_sleep_start();
@@ -565,7 +578,7 @@ void WebServerStart(void)
       if (++pathIndex >= 2)
       {
         pathIndex = 0;
-        showMainPage();
+        showMainPage(false);
       }
     }
   });
@@ -579,12 +592,23 @@ void WebServerStart(void)
   server.begin();
 }
 
-void showMainPage(void)
+void showMainPage(bool sleep)
 {
   selectedScreen = true;
   displayInit();
   display.fillScreen(GxEPD_WHITE);
   drawBitmap(DEFALUT_AVATAR_BMP, 10, 10, true);
+  if(sleep) {
+    if(card) {
+      displayText("SM", 12, RIGHT_ALIGNMENT);
+    } else {
+      displayText("S", 12, RIGHT_ALIGNMENT);
+    }
+  } else {
+    if(card) {
+      displayText("M", 12, RIGHT_ALIGNMENT);
+    }
+  }
   displayText(String(info.name), 30, RIGHT_ALIGNMENT);
   displayText(String(info.company), 50, RIGHT_ALIGNMENT);
   displayText(String(info.email), 70, RIGHT_ALIGNMENT);
@@ -592,12 +616,23 @@ void showMainPage(void)
   display.update();
 }
 
-void showQrPage(void)
+void showQrPage(bool sleep)
 {
   selectedScreen = false;
   displayInit();
   display.fillScreen(GxEPD_WHITE);
   drawBitmap(DEFALUT_QR_CODE_BMP, 10, 10, true);
+  if(sleep) {
+    if(card) {
+      displayText("SM", 12, RIGHT_ALIGNMENT);
+    } else {
+      displayText("S", 12, RIGHT_ALIGNMENT);
+    }
+  } else {
+    if(card) {
+      displayText("M", 12, RIGHT_ALIGNMENT);
+    }
+  }
   displayText(String(info.tel), 50, RIGHT_ALIGNMENT);
   displayText(String(info.email), 70, RIGHT_ALIGNMENT);
   displayText(String(info.address), 90, RIGHT_ALIGNMENT);
@@ -835,6 +870,7 @@ void displayInit(void)
 #endif
     {
       Serial.println("SDCard MOUNT FAIL");
+      card = false;
       // displayText("SDCard MOUNT FAIL", 50, CENTER_ALIGNMENT);
     }
     else
@@ -843,6 +879,7 @@ void displayInit(void)
       uint32_t cardSize = SD.cardSize() / (1024 * 1024);
       // displayText("SDCard Size: " + String(cardSize) + "MB", 70, CENTER_ALIGNMENT);
       Serial.printf("SDCard MOUNT PASS, Size: %f MB", cardSize);
+      card = true;
     }
     // display.update();
     // delay(2000);
@@ -933,11 +970,9 @@ void setup()
 
   if (esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_UNDEFINED)
   {
-    if (selectedScreen) {
-      showMainPage();
-    } else {
-      showQrPage();
-    }
+    showMainPage(false);
+  } else {
+    showMainPage(false);
   }
 
   WebServerStart();
