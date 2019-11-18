@@ -3,7 +3,8 @@ TTGO Smart Badge
 
 ## *Differences* From Main Repository
 - This project is aimed at the creation of a smart badge.
-- Includes header for board "20190107 T5_V2.3_2.13".
+- Includes header for board "20190107 T5_V2.3_2.13" and this was a focus board for development.
+- Add sleep and sd card mount status.
 - Adds single, double and tripple click so that button 3 on above mention board can handle all original functionality.
 - Default settings is AP mode (password: "48714650") and set for board "20190107 T5_V2.3_2.13".
 - Some grammer fixes in the code and some clean ups.
