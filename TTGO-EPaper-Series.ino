@@ -121,9 +121,37 @@ uint8_t mono_palette_buffer[max_palette_pixels / 8];  // palette buffer for dept
 uint8_t color_palette_buffer[max_palette_pixels / 8]; // palette buffer for depth <= 8 c/w
 uint8_t input_buffer[3 * input_buffer_pixels];        // up to depth 24
 const char *path[2] = {DEFALUT_AVATAR_BMP, DEFALUT_QR_CODE_BMP};
+bool selectedScreen = true; // true = main, false = qr.
 
 Button2 *pBtns = nullptr;
 uint8_t g_btns[] = BUTTONS_MAP;
+
+void button2() {
+   static int i = 0;
+   Serial.printf("Show Num: %d font\n", i);
+   i = ((i + 1) >= sizeof(fonts) / sizeof(fonts[0])) ? 0 : i + 1;
+   display.setFont(fonts[i]);
+   if (selectedScreen) {
+    showMainPage();
+   }
+   else {
+    showQrPage();
+   }
+}
+
+void button3() {
+   static bool index = 1;
+   if (!index)
+   {
+      showMainPage();
+      index = true;
+   }
+   else
+   {
+      showQrPage();
+      index = false;
+   }
+}
 
 void button_handle_single(uint8_t gpio)
 {
@@ -144,11 +172,7 @@ void button_handle_single(uint8_t gpio)
 #if BUTTON_2
     case BUTTON_2:
     {
-        static int i = 0;
-        Serial.printf("Show Num: %d font\n", i);
-        i = ((i + 1) >= sizeof(fonts) / sizeof(fonts[0])) ? 0 : i + 1;
-        display.setFont(fonts[i]);
-        showMainPage();
+       button2();
     }
     break;
 #endif
@@ -156,17 +180,7 @@ void button_handle_single(uint8_t gpio)
 #if BUTTON_3
     case BUTTON_3:
     {
-        static bool index = 1;
-        if (!index)
-        {
-            showMainPage();
-            index = true;
-        }
-        else
-        {
-            showQrPage();
-            index = false;
-        }
+       button3();
     }
     break;
 #endif
@@ -194,11 +208,7 @@ void button_handle_double(uint8_t gpio)
 #if BUTTON_2
     case BUTTON_2:
     {
-        static int i = 0;
-        Serial.printf("Show Num: %d font\n", i);
-        i = ((i + 1) >= sizeof(fonts) / sizeof(fonts[0])) ? 0 : i + 1;
-        display.setFont(fonts[i]);
-        showMainPage();
+        button2();
     }
     break;
 #endif
@@ -206,11 +216,7 @@ void button_handle_double(uint8_t gpio)
 #if BUTTON_3
     case BUTTON_3:
     {
-        static int i = 0;
-        Serial.printf("Show Num: %d font\n", i);
-        i = ((i + 1) >= sizeof(fonts) / sizeof(fonts[0])) ? 0 : i + 1;
-        display.setFont(fonts[i]);
-        showMainPage();
+        button2();
     }
     break;
 #endif
@@ -238,11 +244,7 @@ void button_handle_triple(uint8_t gpio)
 #if BUTTON_2
     case BUTTON_2:
     {
-        static int i = 0;
-        Serial.printf("Show Num: %d font\n", i);
-        i = ((i + 1) >= sizeof(fonts) / sizeof(fonts[0])) ? 0 : i + 1;
-        display.setFont(fonts[i]);
-        showMainPage();
+        button2();
     }
     break;
 #endif
@@ -285,6 +287,11 @@ void button_callback(Button2& b)
             Serial.printf("btn: %u press\n", pBtns[i].getAttachPin());
             button_handle_triple(pBtns[i].getAttachPin());
             break;
+        case LONG_CLICK:
+            Serial.println("Button long click.");
+            Serial.printf("btn: %u press\n", pBtns[i].getAttachPin());
+            button_handle_triple(pBtns[i].getAttachPin());
+            break;
       }
     }
   }
@@ -300,6 +307,7 @@ void button_init()
     pBtns[i].setClickHandler(button_callback);
     pBtns[i].setDoubleClickHandler(button_callback);
     pBtns[i].setTripleClickHandler(button_callback);
+    pBtns[i].setLongClickHandler(button_callback);
   }
 }
 
@@ -573,6 +581,7 @@ void WebServerStart(void)
 
 void showMainPage(void)
 {
+  selectedScreen = true;
   displayInit();
   display.fillScreen(GxEPD_WHITE);
   drawBitmap(DEFALUT_AVATAR_BMP, 10, 10, true);
@@ -585,6 +594,7 @@ void showMainPage(void)
 
 void showQrPage(void)
 {
+  selectedScreen = false;
   displayInit();
   display.fillScreen(GxEPD_WHITE);
   drawBitmap(DEFALUT_QR_CODE_BMP, 10, 10, true);
@@ -814,6 +824,7 @@ void displayInit(void)
 
   if (SDCARD_SS > 0)
   {
+    Serial.println();
     display.fillScreen(GxEPD_WHITE);
 #if !(TTGO_T5_2_2)
     SPIClass sdSPI(VSPI);
@@ -823,16 +834,18 @@ void displayInit(void)
     if (!SD.begin(SDCARD_SS))
 #endif
     {
-      displayText("SDCard MOUNT FAIL", 50, CENTER_ALIGNMENT);
+      Serial.println("SDCard MOUNT FAIL");
+      // displayText("SDCard MOUNT FAIL", 50, CENTER_ALIGNMENT);
     }
     else
     {
-      displayText("SDCard MOUNT PASS", 50, CENTER_ALIGNMENT);
+      // displayText("SDCard MOUNT PASS", 50, CENTER_ALIGNMENT);
       uint32_t cardSize = SD.cardSize() / (1024 * 1024);
-      displayText("SDCard Size: " + String(cardSize) + "MB", 70, CENTER_ALIGNMENT);
+      // displayText("SDCard Size: " + String(cardSize) + "MB", 70, CENTER_ALIGNMENT);
+      Serial.printf("SDCard MOUNT PASS, Size: %f MB", cardSize);
     }
-    display.update();
-    delay(2000);
+    // display.update();
+    // delay(2000);
   }
 }
 
@@ -920,7 +933,11 @@ void setup()
 
   if (esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_UNDEFINED)
   {
-    showMainPage();
+    if (selectedScreen) {
+      showMainPage();
+    } else {
+      showQrPage();
+    }
   }
 
   WebServerStart();
