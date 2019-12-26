@@ -1,7 +1,7 @@
 TTGO Smart Badge
 ================
 
-## *New Project* From ['lewisxhe' TTGO-EPaper-Series Project](https://github.com/lewisxhe/TTGO-EPaper-Series)
+## *New Project* From ['lewisxhe' TTGO-EPaper-Series](https://github.com/lewisxhe/TTGO-EPaper-Series)
 - This project is aimed at the creation of a smart badge.
 - Includes header for board "20190107 T5_V2.3_2.13" and this was a focus board for development.
 - Add sleep and sd card mount status.
